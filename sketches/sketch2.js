@@ -54,13 +54,13 @@ registerSketch('sk2', function (p) {
 
   let yPos = (titleBottomY + cupTopY) / 2; // halfway between subtitle and cup rim
 
-  minutesInput.position(canvasCenterX - 80, yPos + 40);
+  minutesInput.position(canvasCenterX - 80, yPos);
   minutesLabel.position(canvasCenterX - 80, yPos + 20);
 
-  secondsInput.position(canvasCenterX - 40, yPos + 40);
+  secondsInput.position(canvasCenterX - 40, yPos);
   secondsLabel.position(canvasCenterX - 40, yPos + 20);
 
-  startButton.position(canvasCenterX, yPos + 40);
+  startButton.position(canvasCenterX, yPos);
 }
 
   p.draw = function() {
