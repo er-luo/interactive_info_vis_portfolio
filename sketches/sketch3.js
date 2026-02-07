@@ -1,7 +1,7 @@
 // Instance-mode sketch for tab 3
 registerSketch('sk3', function (p) {
    p.setup = function () {
-    p.createCanvas(p.windowWidth, p.windowHeight);
+    p.createCanvas(800, 800);
     p.angleMode(p.DEGREES);
   };
 

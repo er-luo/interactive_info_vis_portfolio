@@ -16,9 +16,9 @@ registerSketch('sk2', function (p) {
   let startButton;
 
   p.setup = function() {
-    p.createCanvas(p.windowWidth, p.windowHeight);
+    p.createCanvas(800, 800);
     p.angleMode(p.DEGREES);
-    p.frameRate(20);
+    p.frameRate(60);
 
     lightTea = p.color(245, 240, 230, 200); // light tea
     darkTea  = p.color(90, 50, 20, 220);    // dark tea
@@ -35,7 +35,7 @@ registerSketch('sk2', function (p) {
 
     // --- Create button ---
     startButton = p.createButton('Start Timer');
-    startButton.mousePressed(startTimer);
+    startButton.p.mousePressed(startTimer);
 
     positionInputs();
   };
