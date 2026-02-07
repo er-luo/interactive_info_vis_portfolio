@@ -17,6 +17,7 @@ registerSketch('sk2', function (p) {
 
   p.setup = function() {
   let canvas = p.createCanvas(800, 800);
+  canvas.parent('sketch-container-sk2');
   p.angleMode(p.DEGREES);
   p.frameRate(60);
 
