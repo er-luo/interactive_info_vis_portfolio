@@ -47,23 +47,17 @@ registerSketch('sk2', function (p) {
 };
 
   function positionInputs() {
-    let centerX = p.width / 2;
+  let centerX = p.width / 2;
 
-    // Canvas-space positions
-    let subtitleY = -p.height / 5;
-    let cupRimY = -160 / 2; // cupHeight / 2
-    let inputCanvasY = (subtitleY + cupRimY) / 2;
+  // place inputs somewhere visible
+  let y = 200; // experiment with this number
+  minutesInput.position(centerX - 80, y);
+  minutesLabel.position(centerX - 80, y - 18);
 
-    // Convert to page-space
-    let pageY = p.height / 2 + inputCanvasY;
+  secondsInput.position(centerX - 40, y);
+  secondsLabel.position(centerX - 40, y - 18);
 
-    minutesInput.position(centerX - 80, pageY);
-    minutesLabel.position(centerX - 80, pageY - 20);
-
-    secondsInput.position(centerX - 40, pageY);
-    secondsLabel.position(centerX - 40, pageY - 20);
-
-    startButton.position(centerX + 20, pageY);
+  startButton.position(centerX + 20, y);
 }
 
 
