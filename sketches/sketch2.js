@@ -87,10 +87,14 @@ registerSketch('sk2', function (p) {
     let teaTop = cupY + (cupHeight - teaHeight);
 
     // --- Time progress ---
+    // --- Time progress ---
     let progress = 0;
+    let remaining = 0;
+
     if (timerRunning) {
       let elapsed = p.millis() - startTime;
       progress = p.constrain(elapsed / steepTime, 0, 1);
+      remaining = p.max(0, p.ceil((steepTime - elapsed) / 1000));
     }
 
     // --- Draw tea ---
@@ -122,8 +126,6 @@ registerSketch('sk2', function (p) {
     if (!timerRunning) {
       p.text("Set your timer and press Start", p.width / 2, cupY + cupHeight + 40);
     } else if (progress < 1) {
-      let elapsed = p.millis() - startTime;
-      let remaining = p.max(0, p.ceil((steepTime - elapsed) / 1000));
       p.text("Steeping: " + remaining + "s", p.width / 2, cupY + cupHeight + 40);
     } else {
       p.textSize(32);
