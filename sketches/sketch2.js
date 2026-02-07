@@ -10,34 +10,47 @@ registerSketch('sk2', function (p) {
   let lightTea;
   let darkTea;
 
-  // Inputs and button
+  // Inputs, labels, and button
   let minutesInput, secondsInput;
+  let minutesLabel, secondsLabel;
   let startButton;
 
   p.setup = function() {
     p.createCanvas(p.windowWidth, p.windowHeight);
     p.angleMode(p.DEGREES);
+    p.frameRate(20);
 
     lightTea = p.color(245, 240, 230, 200); // light tea
     darkTea  = p.color(90, 50, 20, 220);    // dark tea
 
-    // --- Create input form ---
+    // --- Create inputs ---
     minutesInput = p.createInput('0');
     minutesInput.size(30);
-    minutesInput.attribute('placeholder', 'min');
-
     secondsInput = p.createInput('10');
     secondsInput.size(30);
-    secondsInput.attribute('placeholder', 'sec');
 
+    // --- Create labels ---
+    minutesLabel = p.createSpan('Min');
+    secondsLabel = p.createSpan('Sec');
+
+    // --- Create button ---
     startButton = p.createButton('Start Timer');
     startButton.mousePressed(startTimer);
 
-    let yPos = p.height / 3;
-    minutesInput.position(p.width / 2 - 80, yPos);
-    secondsInput.position(p.width / 2 - 40, yPos);
-    startButton.position(p.width / 2, yPos);
+    positionInputs();
   };
+
+  function positionInputs() {
+    let yPos = p.height / 2.9;
+
+    minutesInput.position(p.width / 2 - 80, yPos);
+    minutesLabel.position(p.width / 2 - 80, yPos - 20);
+
+    secondsInput.position(p.width / 2 - 40, yPos);
+    secondsLabel.position(p.width / 2 - 40, yPos - 20);
+
+    startButton.position(p.width / 2, yPos);
+  }
 
   p.draw = function() {
     p.background(245);
@@ -137,9 +150,11 @@ registerSketch('sk2', function (p) {
     timerRunning = true;
   }
 
-
   p.windowResized = function() {
     p.resizeCanvas(p.windowWidth, p.windowHeight);
+    positionInputs();
   };
+
+
 
 });
