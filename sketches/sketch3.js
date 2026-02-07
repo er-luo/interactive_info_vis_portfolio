@@ -47,7 +47,7 @@ registerSketch('sk3', function (p) {
 
     // Seconds ring
     p.stroke('#ff6464');
-    p.arc(0, 0, 300, 300, -90, scAngle - 90);
+    p.arc(0, 0, 300, 300, -90, hrAngle - 90);
 
     // Minutes ring
     p.stroke('#00ff64');
@@ -55,7 +55,7 @@ registerSketch('sk3', function (p) {
 
     // Hours ring
     p.stroke('#6464ff');
-    p.arc(0, 0, 220, 220, -90, hrAngle - 90);
+    p.arc(0, 0, 220, 220, -90, scAngle - 90);
 
     // Digital time + date
     p.noStroke();
