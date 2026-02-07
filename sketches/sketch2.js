@@ -1,82 +1,79 @@
 // Instance-mode sketch for tab 2
 registerSketch('sk2', function (p) {
-p.setup = function () {
-  p.createCanvas(p.windowWidth, p.windowHeight);
-  p.angleMode(DEGREES);
-};
+  p.setup = function () {
+    p.createCanvas(p.windowWidth, p.windowHeight);
+    p.angleMode(p.DEGREES);
+  };
 
-p.draw = function (){
-  p.background('black');
+  p.draw = function () {
+    p.background('black');
 
-  let hr = p.hour() % 12;
-  let mn = p.minute();
-  let sc = p.second();
+    // Time values
+    let hr = p.hour() % 12;
+    let mn = p.minute();
+    let sc = p.second();
 
-  let scAngle = map(sc, 0, 60, 0, 360);
-  let mnAngle = map(mn, 0, 60, 0, 360);
-  let hrAngle = map(hr + mn / 60, 0, 12, 0, 360);
-  
-  let d = p.day();
-  let m = p.month();
-  
-  let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-  let dayOfWeek = days[d];
-  
-  let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
-  let monthAbv = months[m];
-  
+    // Angle mappings
+    let scAngle = p.map(sc, 0, 60, 0, 360);
+    let mnAngle = p.map(mn, 0, 60, 0, 360);
+    let hrAngle = p.map(hr + mn / 60, 0, 12, 0, 360);
 
-  p.translate(p.width / 2, p.height / 2);
+    // Date values
+    let dayIndex = p.weekday(); // 0–6
+    let monthIndex = p.month() - 1; // 0–11
+    let dateNum = p.day(); // 1–31
 
-  p.noFill();
-  p.strokeCap(ROUND);
-  
-  //faded circles in background to help visualize progress
-  p.stroke('#4a1c1c');
-  p.strokeWeight(12);
-  p.circle(0,0,300);
-  
-  p.stroke('#163b16');
-  p.strokeWeight(12);
-  p.circle(0,0,260);
-  
-  p.stroke('#2c2c42');
-  p.strokeWeight(12);
-  p.circle(0,0,220);
+    let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 
-  // Seconds ring
-  p.stroke('#ff6464');
-  p.strokeWeight(12);
-  p.arc(0, 0, 300, 300, -90, hrAngle - 90);
+    let dayOfWeek = days[dayIndex];
+    let monthAbv = months[monthIndex];
 
-  // Minutes ring
-  p.stroke('#00ff64');
-  p.strokeWeight(12);
-  p.arc(0, 0, 260, 260, -90, mnAngle - 90);
+    // Center canvas
+    p.translate(p.width / 2, p.height / 2);
 
-  // Hours ring
-  p.stroke('#6464ff');
-  p.strokeWeight(12);
-  p.arc(0, 0, 220, 220, -90, scAngle - 90);
-  
-  
+    p.noFill();
+    p.strokeCap(p.ROUND);
 
-  // Digital time + date
-  p.noStroke();
-  p.fill(0);
-  p.textAlign(CENTER, CENTER);
-  p.textSize(24);
-  p.fill('white');
-  p.text(
-    nf(hr, 2) + ":" + nf(mn, 2) + ":" + nf(sc, 2) + 
-    '\n' + dayOfWeek + ', ' + monthAbv + ". " + m,
-    0,
-    0
-  );
+    // Background guide circles
+    p.stroke('#4a1c1c');
+    p.strokeWeight(12);
+    p.circle(0, 0, 300);
 
+    p.stroke('#163b16');
+    p.circle(0, 0, 260);
 
-};
+    p.stroke('#2c2c42');
+    p.circle(0, 0, 220);
 
-p.windowResized = function () { p.resizeCanvas(p.windowWidth, p.windowHeight); };
+    // Seconds ring
+    p.stroke('#ff6464');
+    p.arc(0, 0, 300, 300, -90, scAngle - 90);
+
+    // Minutes ring
+    p.stroke('#00ff64');
+    p.arc(0, 0, 260, 260, -90, mnAngle - 90);
+
+    // Hours ring
+    p.stroke('#6464ff');
+    p.arc(0, 0, 220, 220, -90, hrAngle - 90);
+
+    // Digital time + date
+    p.noStroke();
+    p.fill('white');
+    p.textAlign(p.CENTER, p.CENTER);
+    p.textSize(24);
+
+    p.text(
+      p.nf(hr, 2) + ":" + p.nf(mn, 2) + ":" + p.nf(sc, 2) +
+      "\n" + dayOfWeek + ", " + monthAbv + ". " + dateNum,
+      0,
+      0
+    );
+  };
+
+  p.windowResized = function () {
+    p.resizeCanvas(p.windowWidth, p.windowHeight);
+  };
 
 });
