@@ -48,17 +48,20 @@ registerSketch('sk2', function (p) {
   };
 
   function positionInputs() {
-    let canvasCenterX = p.width / 2;
-    let yPos = p.height / 4 + 40; // below the subtitle
+  let canvasCenterX = p.width / 2;
+  let titleBottomY = p.height / 4 + 40;   // title + subtitle
+  let cupTopY = p.height / 2 - 160 / 2;   // cupHeight = 160
 
-    minutesInput.position(canvasCenterX - 80, yPos);
-    minutesLabel.position(canvasCenterX - 80, yPos - 20);
+  let yPos = (titleBottomY + cupTopY) / 2; // halfway between subtitle and cup rim
 
-    secondsInput.position(canvasCenterX - 40, yPos);
-    secondsLabel.position(canvasCenterX - 40, yPos - 20);
+  minutesInput.position(canvasCenterX - 80, yPos);
+  minutesLabel.position(canvasCenterX - 80, yPos - 20);
 
-    startButton.position(canvasCenterX, yPos + 40);
-  }
+  secondsInput.position(canvasCenterX - 40, yPos);
+  secondsLabel.position(canvasCenterX - 40, yPos - 20);
+
+  startButton.position(canvasCenterX, yPos + 40);
+}
 
   p.draw = function() {
     p.background(245);
@@ -126,7 +129,6 @@ registerSketch('sk2', function (p) {
       p.textSize(32);
       p.fill(80, 150, 60);
       p.text("Done!", p.width / 2, cupY + cupHeight + 40);
-      timerRunning = false;
     }
   };
 
