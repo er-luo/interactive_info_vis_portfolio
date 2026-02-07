@@ -48,7 +48,7 @@ registerSketch('sk2', function (p) {
 
   function positionInputs() {
     let centerX = p.width / 2;
-    let yPos = 120; // distance from top of canvas
+    let yPos = -p.height/6; // distance from top of canvas
 
     minutesInput.position(centerX - 80, yPos);
     minutesLabel.position(centerX - 80, yPos - 20);
@@ -57,7 +57,7 @@ registerSketch('sk2', function (p) {
     secondsLabel.position(centerX - 40, yPos - 20);
 
     startButton.position(centerX, yPos);
-}
+  }
 
   p.draw = function() {
     p.background(245);
