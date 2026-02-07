@@ -48,16 +48,24 @@ registerSketch('sk2', function (p) {
 
   function positionInputs() {
     let centerX = p.width / 2;
-    let yPos = p.height /6; // distance from top of canvas
 
-    minutesInput.position(centerX - 80, -(yPos));
-    minutesLabel.position(centerX - 80, -(yPos) - 20);
+    // Canvas-space positions
+    let subtitleY = -p.height / 5;
+    let cupRimY = -160 / 2; // cupHeight / 2
+    let inputCanvasY = (subtitleY + cupRimY) / 2;
 
-    secondsInput.position(centerX - 40, -(yPos));
-    secondsLabel.position(centerX - 40, -(yPos) - 20);
+    // Convert to page-space
+    let pageY = p.height / 2 + inputCanvasY;
 
-    startButton.position(centerX, -(yPos));
-  }
+    minutesInput.position(centerX - 80, pageY);
+    minutesLabel.position(centerX - 80, pageY - 20);
+
+    secondsInput.position(centerX - 40, pageY);
+    secondsLabel.position(centerX - 40, pageY - 20);
+
+    startButton.position(centerX + 20, pageY);
+}
+
 
   p.draw = function() {
     p.background(245);
