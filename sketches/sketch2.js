@@ -16,29 +16,34 @@ registerSketch('sk2', function (p) {
   let startButton;
 
   p.setup = function() {
-    p.createCanvas(800, 800);
-    p.angleMode(p.DEGREES);
-    p.frameRate(60);
+  let canvas = p.createCanvas(800, 800);
+  p.angleMode(p.DEGREES);
+  p.frameRate(60);
 
-    lightTea = p.color(245, 240, 230, 200); // light tea
-    darkTea  = p.color(90, 50, 20, 220);    // dark tea
+  lightTea = p.color(245, 240, 230, 200);
+  darkTea  = p.color(90, 50, 20, 220);
 
-    // --- Create inputs ---
-    minutesInput = p.createInput('0');
-    minutesInput.size(30);
-    secondsInput = p.createInput('10');
-    secondsInput.size(30);
+  minutesInput = p.createInput('0');
+  minutesInput.size(30);
 
-    // --- Create labels ---
-    minutesLabel = p.createSpan('Min');
-    secondsLabel = p.createSpan('Sec');
+  secondsInput = p.createInput('10');
+  secondsInput.size(30);
 
-    // --- Create button ---
-    startButton = p.createButton('Start Timer');
-    startButton.mousePressed(startTimer);
+  minutesLabel = p.createSpan('Min');
+  secondsLabel = p.createSpan('Sec');
 
-    positionInputs();
-  };
+  startButton = p.createButton('Start Timer');
+  startButton.mousePressed(startTimer);
+
+  const parentEl = canvas.parent();
+  minutesInput.parent(parentEl);
+  secondsInput.parent(parentEl);
+  minutesLabel.parent(parentEl);
+  secondsLabel.parent(parentEl);
+  startButton.parent(parentEl);
+
+  positionInputs();
+};
 
   function positionInputs() {
     let yPos = p.height / 2.9;
