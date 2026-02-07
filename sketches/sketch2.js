@@ -2,7 +2,7 @@
 registerSketch('sk2', function (p) {
 
   // --- Timer settings ---
-  let steepTime = 0; // no default time
+  let steepTime = 0; 
   let startTime;
   let timerRunning = false;
 
@@ -16,71 +16,72 @@ registerSketch('sk2', function (p) {
   let startButton;
 
   p.setup = function() {
-  let canvas = p.createCanvas(800, 800);
-  canvas.parent('sketch-container-sk2');
-  p.angleMode(p.DEGREES);
-  p.frameRate(60);
+    let canvas = p.createCanvas(800, 800);
+    canvas.parent('sketch-container-sk2');
+    p.angleMode(p.DEGREES);
+    p.frameRate(60);
 
-  lightTea = p.color(245, 240, 230, 200);
-  darkTea  = p.color(90, 50, 20, 220);
+    lightTea = p.color(245, 240, 230, 200);
+    darkTea  = p.color(90, 50, 20, 220);
 
-  minutesInput = p.createInput('0');
-  minutesInput.size(30);
+    // --- Create inputs ---
+    minutesInput = p.createInput('0');
+    minutesInput.size(30);
+    secondsInput = p.createInput('10');
+    secondsInput.size(30);
 
-  secondsInput = p.createInput('10');
-  secondsInput.size(30);
+    minutesLabel = p.createSpan('Min');
+    secondsLabel = p.createSpan('Sec');
 
-  minutesLabel = p.createSpan('Min');
-  secondsLabel = p.createSpan('Sec');
+    startButton = p.createButton('Start Timer');
+    startButton.mousePressed(startTimer);
 
-  startButton = p.createButton('Start Timer');
-  startButton.mousePressed(startTimer);
+    // Attach inputs to the canvas container
+    const parentEl = canvas.parent();
+    minutesInput.parent(parentEl);
+    secondsInput.parent(parentEl);
+    minutesLabel.parent(parentEl);
+    secondsLabel.parent(parentEl);
+    startButton.parent(parentEl);
 
-  const parentEl = canvas.parent();
-  minutesInput.parent(parentEl);
-  secondsInput.parent(parentEl);
-  minutesLabel.parent(parentEl);
-  secondsLabel.parent(parentEl);
-  startButton.parent(parentEl);
-
-  positionInputs();
-};
+    positionInputs();
+  };
 
   function positionInputs() {
-  let centerX = p.width / 2;
+    let canvasCenterX = p.width / 2;
+    let yPos = p.height / 4 + 40; // below the subtitle
 
-  // place inputs somewhere visible
-  let y = 200; // experiment with this number
-  minutesInput.position(centerX - 80, y);
-  minutesLabel.position(centerX - 80, y - 18);
+    minutesInput.position(canvasCenterX - 80, yPos);
+    minutesLabel.position(canvasCenterX - 80, yPos - 20);
 
-  secondsInput.position(centerX - 40, y);
-  secondsLabel.position(centerX - 40, y - 18);
+    secondsInput.position(canvasCenterX - 40, yPos);
+    secondsLabel.position(canvasCenterX - 40, yPos - 20);
 
-  startButton.position(centerX + 20, y);
-}
-
+    startButton.position(canvasCenterX, yPos + 40);
+  }
 
   p.draw = function() {
     p.background(245);
-    p.translate(p.width / 2, p.height / 2);
 
     // --- Title ---
     p.noStroke();
     p.fill(135, 88, 54);
     p.textAlign(p.CENTER, p.CENTER);
     p.textSize(36);
-    p.text("Tea Timer", 0, -p.height / 4);
+    p.text("Tea Timer", p.width / 2, p.height / 4);
 
     // --- Subtitle ---
     p.textSize(15);
-    p.text("Watch your tea steep!", 0, -p.height / 5);
+    p.text("Watch your tea steep!", p.width / 2, p.height / 4 + 30);
 
     // --- Cup dimensions ---
     let cupWidth = 220;
     let cupHeight = 160;
+    let cupX = p.width / 2 - cupWidth / 2;
+    let cupY = p.height / 2 - cupHeight / 2;
+
     let teaHeight = cupHeight * 0.9;
-    let teaTop = cupHeight / 2 - teaHeight;
+    let teaTop = cupY + (cupHeight - teaHeight);
 
     // --- Time progress ---
     let progress = 0;
@@ -93,21 +94,21 @@ registerSketch('sk2', function (p) {
     let teaColor = p.lerpColor(lightTea, darkTea, progress);
     p.noStroke();
     p.fill(teaColor);
-    p.rect(-cupWidth / 2, teaTop, cupWidth, teaHeight, 0, 0, 20, 20);
+    p.rect(cupX, teaTop, cupWidth, teaHeight, 0, 0, 20, 20);
 
     // --- Dark line on top of tea ---
     p.stroke(80, 50, 20);
     p.strokeWeight(2);
-    p.line(-cupWidth / 2, teaTop, cupWidth / 2, teaTop);
+    p.line(cupX, teaTop, cupX + cupWidth, teaTop);
 
     // --- Cup outline ---
     p.noFill();
     p.stroke(80);
     p.strokeWeight(4);
-    p.rect(-cupWidth / 2, -cupHeight / 2, cupWidth, cupHeight, 0, 0, 30, 30);
+    p.rect(cupX, cupY, cupWidth, cupHeight, 0, 0, 30, 30);
 
     // --- Tea bag ---
-    drawTeaBag(cupWidth, cupHeight);
+    drawTeaBag(cupX, cupY, cupWidth, cupHeight);
 
     // --- Timer text ---
     p.noStroke();
@@ -116,24 +117,24 @@ registerSketch('sk2', function (p) {
     p.textSize(16);
 
     if (!timerRunning) {
-      p.text("Set your timer and press Start", 0, cupHeight / 2 + 40);
+      p.text("Set your timer and press Start", p.width / 2, cupY + cupHeight + 40);
     } else if (progress < 1) {
       let elapsed = p.millis() - startTime;
       let remaining = p.max(0, p.ceil((steepTime - elapsed) / 1000));
-      p.text("Steeping: " + remaining + "s", 0, cupHeight / 2 + 40);
+      p.text("Steeping: " + remaining + "s", p.width / 2, cupY + cupHeight + 40);
     } else {
       p.textSize(32);
       p.fill(80, 150, 60);
-      p.text("Done!", 0, cupHeight / 2 + 40);
+      p.text("Done!", p.width / 2, cupY + cupHeight + 40);
       timerRunning = false;
     }
   };
 
-  function drawTeaBag(cupWidth, cupHeight) {
+  function drawTeaBag(cupX, cupY, cupWidth, cupHeight) {
     p.push();
     let sway = Math.sin(p.frameCount * 0.03) * 8;
-    let rimX = -cupWidth / 4;
-    let rimY = -cupHeight / 2;
+    let rimX = cupX + cupWidth / 4;
+    let rimY = cupY;
 
     // String
     p.stroke(120);
@@ -163,7 +164,4 @@ registerSketch('sk2', function (p) {
     p.resizeCanvas(p.windowWidth, p.windowHeight);
     positionInputs();
   };
-
-
-
 });
