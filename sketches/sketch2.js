@@ -48,15 +48,15 @@ registerSketch('sk2', function (p) {
 
   function positionInputs() {
     let centerX = p.width / 2;
-    let yPos = -p.height/6; // distance from top of canvas
+    let yPos = p.height /6; // distance from top of canvas
 
-    minutesInput.position(centerX - 80, yPos);
-    minutesLabel.position(centerX - 80, yPos - 20);
+    minutesInput.position(centerX - 80, -(yPos));
+    minutesLabel.position(centerX - 80, -(yPos) - 20);
 
-    secondsInput.position(centerX - 40, yPos);
-    secondsLabel.position(centerX - 40, yPos - 20);
+    secondsInput.position(centerX - 40, -(yPos));
+    secondsLabel.position(centerX - 40, -(yPos) - 20);
 
-    startButton.position(centerX, yPos);
+    startButton.position(centerX, -(yPos));
   }
 
   p.draw = function() {
@@ -129,7 +129,7 @@ registerSketch('sk2', function (p) {
 
   function drawTeaBag(cupWidth, cupHeight) {
     p.push();
-    let sway = Math.sin(p.frameCount * 0.8) * 8;
+    let sway = Math.sin(p.frameCount * 0.03) * 8;
     let rimX = -cupWidth / 4;
     let rimY = -cupHeight / 2;
 
