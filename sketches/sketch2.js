@@ -8,16 +8,16 @@ p.setup = function () {
 p.draw = function (){
   p.background('black');
 
-  let hr = hour() % 12;
-  let mn = minute();
-  let sc = second();
+  let hr = p.hour() % 12;
+  let mn = p.minute();
+  let sc = p.second();
 
   let scAngle = map(sc, 0, 60, 0, 360);
   let mnAngle = map(mn, 0, 60, 0, 360);
   let hrAngle = map(hr + mn / 60, 0, 12, 0, 360);
   
-  let d = day();
-  let m = month();
+  let d = p.day();
+  let m = p.month();
   
   let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   let dayOfWeek = days[d];
@@ -26,7 +26,7 @@ p.draw = function (){
   let monthAbv = months[m];
   
 
-  p.translate(width / 2, height / 2);
+  p.translate(p.width / 2, p.height / 2);
 
   p.noFill();
   p.strokeCap(ROUND);
@@ -68,7 +68,7 @@ p.draw = function (){
   p.textSize(24);
   p.fill('white');
   p.text(
-    nf(hour(), 2) + ":" + nf(mn, 2) + ":" + nf(sc, 2) + 
+    nf(hr, 2) + ":" + nf(mn, 2) + ":" + nf(sc, 2) + 
     '\n' + dayOfWeek + ', ' + monthAbv + ". " + m,
     0,
     0
