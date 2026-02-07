@@ -47,16 +47,17 @@ registerSketch('sk2', function (p) {
 };
 
   function positionInputs() {
-    let yPos = p.height / 2.9;
+    let centerX = p.width / 2;
+    let yPos = 120; // distance from top of canvas
 
-    minutesInput.position(p.width / 2 - 80, yPos);
-    minutesLabel.position(p.width / 2 - 80, yPos - 20);
+    minutesInput.position(centerX - 80, yPos);
+    minutesLabel.position(centerX - 80, yPos - 20);
 
-    secondsInput.position(p.width / 2 - 40, yPos);
-    secondsLabel.position(p.width / 2 - 40, yPos - 20);
+    secondsInput.position(centerX - 40, yPos);
+    secondsLabel.position(centerX - 40, yPos - 20);
 
-    startButton.position(p.width / 2, yPos);
-  }
+    startButton.position(centerX, yPos);
+}
 
   p.draw = function() {
     p.background(245);
