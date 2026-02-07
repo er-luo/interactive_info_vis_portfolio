@@ -18,10 +18,11 @@ registerSketch('sk3', function (p) {
     let mnAngle = p.map(mn, 0, 60, 0, 360);
     let hrAngle = p.map(hr + mn / 60, 0, 12, 0, 360);
 
-    // Date values
-    let dayIndex = p.weekday(); // 0–6
-    let monthIndex = p.month() - 1; // 0–11
-    let dateNum = p.day(); // 1–31
+    let now = new Date();
+    let dayIndex = now.getDay();        
+    let dateNum = p.day();              
+    let monthIndex = p.month() - 1;     
+
 
     let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
