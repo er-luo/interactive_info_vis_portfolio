@@ -6,7 +6,7 @@ registerSketch('sk3', function (p) {
   };
 
   p.draw = function () {
-    p.background('black');
+    p.background(0);
 
     // Time values
     let hr = p.hour() % 12;
@@ -27,8 +27,6 @@ registerSketch('sk3', function (p) {
     let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     let months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 
-    let dayOfWeek = days[dayIndex];
-    let monthAbv = months[monthIndex];
 
     // Center canvas
     p.translate(p.width / 2, p.height / 2);
@@ -67,7 +65,7 @@ registerSketch('sk3', function (p) {
 
     p.text(
       p.nf(hr, 2) + ":" + p.nf(mn, 2) + ":" + p.nf(sc, 2) +
-      "\n" + dayOfWeek + ", " + monthAbv + ". " + dateNum,
+      "\n" +  days[dayIndex] + ", " + months[monthIndex] + ". " + dateNum,
       0,
       0
     );
