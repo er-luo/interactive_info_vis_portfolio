@@ -35,7 +35,7 @@ registerSketch('sk2', function (p) {
 
     // --- Create button ---
     startButton = p.createButton('Start Timer');
-    startButton.p.mousePressed(startTimer);
+    startButton.mousePressed(startTimer);
 
     positionInputs();
   };
