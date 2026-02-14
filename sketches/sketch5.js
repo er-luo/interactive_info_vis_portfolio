@@ -19,21 +19,6 @@ registerSketch('sk5', function (p) {
     "09": 30, "10": 31, "11": 30, "12": 31
   };
 
-  // ---- Seasons ----
-  const seasons = {
-    "12": "Winter", "01": "Winter", "02": "Winter",
-    "03": "Spring", "04": "Spring", "05": "Spring",
-    "06": "Summer", "07": "Summer", "08": "Summer",
-    "09": "Fall",   "10": "Fall",   "11": "Fall"
-  };
-
-  const seasonColors = {
-    "Winter": [120, 170, 255],
-    "Spring": [120, 220, 140],
-    "Summer": [255, 200, 80],
-    "Fall":   [255, 140, 80]
-  };
-
   const schoolBreaks = [
     { month: "12", name: "Winter Break" },
     { month: "06", name: "Summer Break" },
@@ -66,6 +51,8 @@ registerSketch('sk5', function (p) {
     overallAvg =
       Object.values(monthlyAvgs).reduce((a, b) => a + b, 0) /
       months.length;
+
+    console.log("Monthly averages:", monthlyAvgs);
   };
 
   function calculateMonthlyTotals() {
@@ -92,51 +79,12 @@ registerSketch('sk5', function (p) {
     // ---- Concentric circles ----
     p.noFill();
     p.stroke(200);
-    for (let i = 1; i <= 4; i++) {
-      p.ellipse(0, 0, (radius / 4) * i * 2);
+    let numCircles = 4;
+    for (let i = 1; i <= numCircles; i++) {
+      p.ellipse(0, 0, (radius / numCircles) * i * 2);
     }
 
-    // ---- Continuous Season Ring ----
-    let arcThickness = 18;
-    p.noFill();
-    p.strokeWeight(arcThickness);
-
-    let i = 0;
-    while (i < months.length) {
-      let currentSeason = seasons[months[i]];
-      let startIndex = i;
-
-      // count how many consecutive months share this season
-      while (
-        i < months.length &&
-        seasons[months[i]] === currentSeason
-      ) {
-        i++;
-      }
-
-      let endIndex = i;
-
-      let angleStart =
-        p.TWO_PI * startIndex / months.length - p.HALF_PI;
-      let angleEnd =
-        p.TWO_PI * endIndex / months.length - p.HALF_PI;
-
-      let color = seasonColors[currentSeason];
-      p.stroke(color[0], color[1], color[2], 180);
-
-      p.arc(
-        0,
-        0,
-        (radius + 45) * 2,
-        (radius + 45) * 2,
-        angleStart,
-        angleEnd
-      );
-    }
-
-    p.strokeWeight(1);
-
-    // ---- Radar shape ----
+    // ---- Radar shape (using monthlyAvgs) ----
     p.fill(100, 150, 255, 150);
     p.stroke(0);
     p.strokeWeight(1.5);
@@ -145,11 +93,13 @@ registerSketch('sk5', function (p) {
       let angle = p.TWO_PI * i / months.length - p.HALF_PI;
       let value = monthlyAvgs[months[i]];
       let r = p.map(value, 0, maxValue, 0, radius);
-      p.vertex(r * Math.cos(angle), r * Math.sin(angle));
+      let x = r * Math.cos(angle);
+      let y = r * Math.sin(angle);
+      p.vertex(x, y);
     }
     p.endShape(p.CLOSE);
 
-    // ---- Month markers & labels ----
+    // ---- Month markers and labels ----
     for (let i = 0; i < months.length; i++) {
       let angle = p.TWO_PI * i / months.length - p.HALF_PI;
       let value = monthlyAvgs[months[i]];
@@ -157,45 +107,86 @@ registerSketch('sk5', function (p) {
       let x = r * Math.cos(angle);
       let y = r * Math.sin(angle);
 
+      // Marker
       p.fill(255, 50, 50);
       p.noStroke();
       p.ellipse(x, y, 8, 8);
 
+      // Value label (rounded daily minutes)
       p.fill(0);
       p.textSize(12);
       p.textAlign(p.CENTER, p.BOTTOM);
       p.text(Math.round(value) + " min/day", x, y - 5);
 
+      // Month label
       let labelRadius = radius + 30;
       let lx = labelRadius * Math.cos(angle);
       let ly = labelRadius * Math.sin(angle);
 
-      p.textAlign(Math.cos(angle) >= 0 ? p.LEFT : p.RIGHT, p.CENTER);
-      p.text(monthNames[months[i]], lx, ly);
-    }
-
-    // ---- School Break Markers ----
-    for (let b = 0; b < schoolBreaks.length; b++) {
-      let breakItem = schoolBreaks[b];
-      let index = months.indexOf(breakItem.month);
-
-      if (index >= 0) {
-        let angle = p.TWO_PI * index / months.length - p.HALF_PI;
-        let r = radius + 75;
-
-        let x = r * Math.cos(angle);
-        let y = r * Math.sin(angle);
-
-        p.fill(255, 165, 0);
-        p.noStroke();
-        p.ellipse(x, y, 10, 10);
-
-        breakItem.screenX = x;
-        breakItem.screenY = y;
+      if (Math.cos(angle) >= 0) {
+        p.textAlign(p.LEFT, p.CENTER);
+      } else {
+        p.textAlign(p.RIGHT, p.CENTER);
       }
+
+      p.text(monthNames[months[i]], lx, ly);
+
+      // ---- School break markers ----
+      for (let b = 0; b < schoolBreaks.length; b++) {
+        let breakItem = schoolBreaks[b];
+        let i = months.indexOf(breakItem.month);
+
+        if (i >= 0) {
+          let angle = p.TWO_PI * i / months.length - p.HALF_PI;
+
+          // place slightly outside month labels
+          let r = radius + 60;
+          let x = r * Math.cos(angle);
+          let y = r * Math.sin(angle);
+
+          p.fill(255, 165, 0);
+          p.noStroke();
+          p.ellipse(x, y, 12, 12);
+
+          // store position for tooltip (relative to center)
+          breakItem.screenX = x;
+          breakItem.screenY = y;
+        }
+      }
+
+      // ---- Tooltip for school breaks ----
+      for (let b = 0; b < schoolBreaks.length; b++) {
+        let breakItem = schoolBreaks[b];
+
+        if (breakItem.screenX !== undefined) {
+
+          let mouseXRel = p.mouseX - centerX;
+          let mouseYRel = p.mouseY - centerY;
+
+          let d = p.dist(mouseXRel, mouseYRel, breakItem.screenX, breakItem.screenY);
+
+          if (d < 10) {
+            p.fill(0);
+            p.textSize(14);
+
+            let tooltipX = breakItem.screenX + 15;
+            let tooltipY = breakItem.screenY - 10;
+
+            if (breakItem.screenX < 0) {
+              tooltipX = breakItem.screenX - 15;
+              p.textAlign(p.RIGHT, p.BOTTOM);
+            } else {
+              p.textAlign(p.LEFT, p.BOTTOM);
+            }
+
+            p.text(breakItem.name, tooltipX, tooltipY);
+          }
+        }
+      }
+
     }
 
-    // ---- Overall Average Line ----
+    // ---- Overall average line ----
     p.stroke(0, 150, 50);
     p.strokeWeight(2);
     p.noFill();
@@ -203,18 +194,19 @@ registerSketch('sk5', function (p) {
     for (let i = 0; i < months.length; i++) {
       let angle = p.TWO_PI * i / months.length - p.HALF_PI;
       let r = p.map(overallAvg, 0, maxValue, 0, radius);
-      p.vertex(r * Math.cos(angle), r * Math.sin(angle));
+      let x = r * Math.cos(angle);
+      let y = r * Math.sin(angle);
+      p.vertex(x, y);
     }
     p.endShape(p.CLOSE);
 
     p.pop();
 
-    // ---- Title ----
+    // ---- Title & subtitle ----
     p.fill(0);
     p.textAlign(p.CENTER);
     p.textSize(24);
     p.text("Average Daily Spotify Listening by Month", p.width / 2, 40);
-
     p.textSize(16);
     p.text("Spotify listening average minutes per day (2025–2026)", p.width / 2, 70);
 
@@ -230,30 +222,14 @@ registerSketch('sk5', function (p) {
     p.textAlign(p.LEFT, p.CENTER);
     p.textSize(12);
     p.text("Overall daily average", legendX + 50, legendY);
-
+    
+    // School break marker legend
     legendY += 20;
     p.fill(255, 165, 0);
-    p.ellipse(legendX + 20, legendY, 10, 10);
+    p.ellipse(legendX + 20, legendY, 12, 12);
     p.fill(0);
     p.text("Major school break", legendX + 50, legendY);
 
-    legendY += 30;
-
-    let seasonList = ["Winter", "Spring", "Summer", "Fall"];
-    for (let s = 0; s < seasonList.length; s++) {
-      let season = seasonList[s];
-      let color = seasonColors[season];
-
-      p.stroke(color[0], color[1], color[2]);
-      p.strokeWeight(6);
-      p.line(legendX, legendY, legendX + 30, legendY);
-
-      p.noStroke();
-      p.fill(0);
-      p.text(season, legendX + 40, legendY);
-
-      legendY += 20;
-    }
   };
 
   p.windowResized = function () {
