@@ -19,13 +19,20 @@ registerSketch('sk5', function (p) {
     "09": 30, "10": 31, "11": 30, "12": 31
   };
 
-  const schoolBreaks = [
-    { month: "12", name: "Winter Break" },
-    { month: "06", name: "Summer Break" },
-    { month: "07", name: "Summer Break" },
-    { month: "08", name: "Summer Break" },
-    { month: "09", name: "Summer Break" }
-  ];
+  // Meteorological seasons
+  const seasons = {
+    "12": "Winter", "01": "Winter", "02": "Winter",
+    "03": "Spring", "04": "Spring", "05": "Spring",
+    "06": "Summer", "07": "Summer", "08": "Summer",
+    "09": "Fall",   "10": "Fall",   "11": "Fall"
+  };
+
+  const seasonColors = {
+    "Winter": [180, 220, 255, 80],
+    "Spring": [180, 255, 180, 80],
+    "Summer": [255, 230, 150, 80],
+    "Fall":   [255, 190, 140, 80]
+  };
 
   p.preload = function () {
     spotifyHistory = p.loadJSON("sketches/datasets/StreamingHistory_combined.json");
@@ -36,7 +43,6 @@ registerSketch('sk5', function (p) {
     spotifyHistory = Object.values(spotifyHistory);
 
     calculateMonthlyTotals();
-
     months = Object.keys(monthlyTotals).sort();
 
     for (let i = 0; i < months.length; i++) {
@@ -51,8 +57,6 @@ registerSketch('sk5', function (p) {
     overallAvg =
       Object.values(monthlyAvgs).reduce((a, b) => a + b, 0) /
       months.length;
-
-    console.log("Monthly averages:", monthlyAvgs);
   };
 
   function calculateMonthlyTotals() {
@@ -76,7 +80,33 @@ registerSketch('sk5', function (p) {
     p.push();
     p.translate(centerX, centerY);
 
-    // ---- Concentric circles ----
+    // --------------------------------------------------
+    // SEASONAL QUADRANT BACKGROUND
+    // --------------------------------------------------
+
+    let quadrantSize = p.TWO_PI / 4;
+
+    const seasonOrder = ["Winter", "Spring", "Summer", "Fall"];
+
+    for (let i = 0; i < 4; i++) {
+      p.fill(...seasonColors[seasonOrder[i]]);
+      p.noStroke();
+
+      p.arc(
+        0,
+        0,
+        radius * 2,
+        radius * 2,
+        -p.HALF_PI + i * quadrantSize,
+        -p.HALF_PI + (i + 1) * quadrantSize,
+        p.PIE
+      );
+    }
+
+    // --------------------------------------------------
+    // GRID CIRCLES
+    // --------------------------------------------------
+
     p.noFill();
     p.stroke(200);
     let numCircles = 4;
@@ -84,7 +114,10 @@ registerSketch('sk5', function (p) {
       p.ellipse(0, 0, (radius / numCircles) * i * 2);
     }
 
-    // ---- Radar shape (using monthlyAvgs) ----
+    // --------------------------------------------------
+    // RADAR SHAPE
+    // --------------------------------------------------
+
     p.fill(100, 150, 255, 150);
     p.stroke(0);
     p.strokeWeight(1.5);
@@ -99,11 +132,15 @@ registerSketch('sk5', function (p) {
     }
     p.endShape(p.CLOSE);
 
-    // ---- Month markers and labels ----
+    // --------------------------------------------------
+    // MONTH MARKERS + LABELS
+    // --------------------------------------------------
+
     for (let i = 0; i < months.length; i++) {
       let angle = p.TWO_PI * i / months.length - p.HALF_PI;
       let value = monthlyAvgs[months[i]];
       let r = p.map(value, 0, maxValue, 0, radius);
+
       let x = r * Math.cos(angle);
       let y = r * Math.sin(angle);
 
@@ -112,11 +149,11 @@ registerSketch('sk5', function (p) {
       p.noStroke();
       p.ellipse(x, y, 8, 8);
 
-      // Value label (rounded daily minutes)
+      // Value label
       p.fill(0);
-      p.textSize(12);
+      p.textSize(11);
       p.textAlign(p.CENTER, p.BOTTOM);
-      p.text(Math.round(value) + " min/day", x, y - 5);
+      p.text(Math.round(value), x, y - 5);
 
       // Month label
       let labelRadius = radius + 30;
@@ -130,63 +167,12 @@ registerSketch('sk5', function (p) {
       }
 
       p.text(monthNames[months[i]], lx, ly);
-
-      // ---- School break markers ----
-      for (let b = 0; b < schoolBreaks.length; b++) {
-        let breakItem = schoolBreaks[b];
-        let i = months.indexOf(breakItem.month);
-
-        if (i >= 0) {
-          let angle = p.TWO_PI * i / months.length - p.HALF_PI;
-
-          // place slightly outside month labels
-          let r = radius + 60;
-          let x = r * Math.cos(angle);
-          let y = r * Math.sin(angle);
-
-          p.fill(255, 165, 0);
-          p.noStroke();
-          p.ellipse(x, y, 12, 12);
-
-          // store position for tooltip (relative to center)
-          breakItem.screenX = x;
-          breakItem.screenY = y;
-        }
-      }
-
-      // ---- Tooltip for school breaks ----
-      for (let b = 0; b < schoolBreaks.length; b++) {
-        let breakItem = schoolBreaks[b];
-
-        if (breakItem.screenX !== undefined) {
-
-          let mouseXRel = p.mouseX - centerX;
-          let mouseYRel = p.mouseY - centerY;
-
-          let d = p.dist(mouseXRel, mouseYRel, breakItem.screenX, breakItem.screenY);
-
-          if (d < 10) {
-            p.fill(0);
-            p.textSize(14);
-
-            let tooltipX = breakItem.screenX + 15;
-            let tooltipY = breakItem.screenY - 10;
-
-            if (breakItem.screenX < 0) {
-              tooltipX = breakItem.screenX - 15;
-              p.textAlign(p.RIGHT, p.BOTTOM);
-            } else {
-              p.textAlign(p.LEFT, p.BOTTOM);
-            }
-
-            p.text(breakItem.name, tooltipX, tooltipY);
-          }
-        }
-      }
-
     }
 
-    // ---- Overall average line ----
+    // --------------------------------------------------
+    // OVERALL AVERAGE LINE
+    // --------------------------------------------------
+
     p.stroke(0, 150, 50);
     p.strokeWeight(2);
     p.noFill();
@@ -200,35 +186,51 @@ registerSketch('sk5', function (p) {
     }
     p.endShape(p.CLOSE);
 
-    p.pop();
+    // --------------------------------------------------
+    // SEASON LABELS
+    // --------------------------------------------------
 
-    // ---- Title & subtitle ----
-    p.fill(0);
-    p.textAlign(p.CENTER);
-    p.textSize(24);
-    p.text("Average Daily Spotify Listening by Month", p.width / 2, 40);
-    p.textSize(16);
-    p.text("Spotify listening average minutes per day (2025–2026)", p.width / 2, 70);
-
-    // ---- Legend ----
-    let legendX = 50;
-    let legendY = 50;
-
-    p.stroke(0, 150, 50);
-    p.strokeWeight(2);
-    p.line(legendX, legendY, legendX + 40, legendY);
     p.noStroke();
+    p.textSize(16);
+    p.textStyle(p.BOLD);
+    p.textAlign(p.CENTER, p.CENTER);
+
+    for (let i = 0; i < 4; i++) {
+      let season = seasonOrder[i];
+
+      // Get base color
+      let base = seasonColors[season];
+
+      // Create darker version (reduce RGB by 40%)
+      let darkR = base[0] * 0.6;
+      let darkG = base[1] * 0.6;
+      let darkB = base[2] * 0.6;
+
+      p.fill(darkR, darkG, darkB);
+
+      let angle = -p.HALF_PI + quadrantSize * (i + 0.5);
+      let labelRadius = radius + 70;
+      let x = labelRadius * Math.cos(angle);
+      let y = labelRadius * Math.sin(angle);
+
+      p.text(season, x, y);
+    }
+
+
+    // --------------------------------------------------
+    // TITLE
+    // --------------------------------------------------
+
+    p.push();              // isolate title styling
+    p.resetMatrix();        // reset any translate/rotate/scaling
     p.fill(0);
-    p.textAlign(p.LEFT, p.CENTER);
-    p.textSize(12);
-    p.text("Overall daily average", legendX + 50, legendY);
-    
-    // School break marker legend
-    legendY += 20;
-    p.fill(255, 165, 0);
-    p.ellipse(legendX + 20, legendY, 12, 12);
-    p.fill(0);
-    p.text("Major school break", legendX + 50, legendY);
+    p.textAlign(p.CENTER, p.TOP);
+    p.textSize(24);
+    p.text("Average Daily Spotify Listening by Month", p.width / 2, 20);
+
+    p.textSize(16);
+    p.text("Spotify listening average minutes per day (2025–2026)", p.width / 2, 50);
+    p.pop();
 
   };
 
