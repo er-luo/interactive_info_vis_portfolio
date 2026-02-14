@@ -226,7 +226,7 @@ registerSketch('sk5', function (p) {
     p.fill(0);
     p.textAlign(p.CENTER, p.TOP);
     p.textSize(24);
-    p.text("How much music did I listen to each season?", p.width / 2, 20);
+    p.text("Four Seasons of Spotify", p.width / 2, 20);
 
     p.textSize(16);
     p.text("My spotify listening average minutes per day (2025–2026)", p.width / 2, 50);
