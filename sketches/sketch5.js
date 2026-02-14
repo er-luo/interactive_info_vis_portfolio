@@ -153,7 +153,7 @@ registerSketch('sk5', function (p) {
       p.fill(0);
       p.textSize(11);
       p.textAlign(p.CENTER, p.BOTTOM);
-      p.text(Math.round(value), x, y - 5);
+      p.text(Math.round(value) + " minutes a day", x, y - 5);
 
       // Month label
       let labelRadius = radius + 30;
@@ -231,6 +231,21 @@ registerSketch('sk5', function (p) {
     p.textSize(16);
     p.text("Spotify listening average minutes per day (2025–2026)", p.width / 2, 50);
     p.pop();
+
+    // ---- Legend ----
+    let legendX = 50;
+    let legendY = 50;
+
+    // Average line
+    p.stroke(0, 150, 50);
+    p.strokeWeight(2);
+    p.line(legendX, legendY, legendX + 40, legendY);
+    p.noStroke();
+    p.fill(0);
+    p.textAlign(p.LEFT, p.CENTER);
+    p.textSize(12);
+    p.text("Overall average", legendX + 50, legendY);
+    p.text("Overall daily average", legendX + 50, legendY);
 
   };
 
